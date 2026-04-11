@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Subitizing Flash</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;overscroll-behavior-y:contain}
+  body{
+    font-family:'Nunito',sans-serif;
+    background:#FDF8F3;
+    color:#3D3229;
+    display:flex;flex-direction:column;
+    height:100dvh;height:100vh;
+    -webkit-user-select:none;user-select:none;
+    touch-action:manipulation;
+  }
+
+  .top{text-align:center;padding:10px 0 2px}
+  .top h1{font-size:1.25rem;font-weight:800;color:#C4652A}
+  .top p{font-size:.7rem;color:#A0917F;font-weight:700;letter-spacing:.3px}
+
+  .stage{
+    flex:1 1 0;display:flex;align-items:center;justify-content:center;
+    padding:6px 24px;min-height:0;overflow:hidden;
+    max-height:55vh;
+  }
+  .flash-card{
+    width:100%;max-width:320px;height:100%;max-height:280px;
+    background:#FFF;border-radius:20px;
+    box-shadow:0 2px 16px rgba(0,0,0,.06);
+    position:relative;display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .dots-area{width:82%;height:78%;position:relative}
+  .dot{
+    position:absolute;width:min(36px,8vw);height:min(36px,8vw);border-radius:50%;
+    transition:opacity .25s;
+  }
+  .dot.pop{animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both}
+  @keyframes popIn{from{transform:translate(-50%,-50%) scale(0)}to{transform:translate(-50%,-50%) scale(1)}}
+
+  .prompt{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    background:rgba(253,248,243,.92);border-radius:20px;
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .prompt.show{opacity:1;pointer-events:auto}
+  .prompt .emoji{font-size:2rem;margin-bottom:4px}
+  .prompt .msg{font-size:1rem;font-weight:800;color:#C4652A}
+  .prompt .sub{font-size:.75rem;color:#A0917F;font-weight:700;margin-top:2px}
+
+  .info{
+    display:flex;justify-content:center;align-items:center;gap:16px;
+    padding:2px 0;min-height:20px;font-size:.72rem;font-weight:700;
+  }
+  .info .streak{color:#A0917F}
+  .info .streak span{color:#C4652A}
+  .info .level-up{color:#4ECDC4;opacity:0;transition:opacity .4s}
+  .info .level-up.show{opacity:1}
+
+  .nums{display:grid;gap:6px;padding:6px 20px 12px}
+  .nums button{
+    padding:10px 0;border:none;border-radius:12px;
+    background:#F0E8DE;font-family:inherit;font-size:1.1rem;font-weight:800;
+    color:#5D4E3C;cursor:pointer;transition:all .15s;
+  }
+  .nums button:active{transform:scale(.92);background:#E4D8C8}
+  .nums button.correct{background:#B8E6C8;color:#2D6B45}
+  .nums button.wrong{background:#F5D0C5;color:#A04030}
+  .nums button:disabled{opacity:.5;pointer-events:none}
+
+  .start-prompt{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    flex-direction:column;cursor:pointer;
+  }
+  .start-prompt .emoji{font-size:2.5rem}
+  .start-prompt .msg{font-size:.9rem;font-weight:800;color:#C4652A;margin-top:6px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>Subitizing Flash</h1>
+  <p>HOW MANY DOTS?</p>
+</div>
+
+<div class="stage">
+  <div class="flash-card" id="card">
+    <div class="dots-area" id="dots"></div>
+    <div class="prompt" id="prompt">
+      <div class="emoji"></div>
+      <div class="msg"></div>
+      <div class="sub"></div>
+    </div>
+    <div class="start-prompt" id="startPrompt" onclick="startRound()">
+      <div class="emoji">👀</div>
+      <div class="msg">Tap to start!</div>
+    </div>
+  </div>
+</div>
+
+<div class="info">
+  <div class="streak" id="streak"></div>
+  <div class="level-up" id="levelUp">⬆ getting harder!</div>
+</div>
+<div class="nums" id="nums"></div>
+
+<script>
+const COLORS=['#E8734A','#4ECDC4','#A78BFA','#F4A261','#E76F8B','#5BB5E0','#7EC88B'];
+
+/* ── Canonical structured patterns (dice/domino style) ── */
+const CANONICAL={
+  1:[[50,50]],
+  2:[[32,50],[68,50]],
+  3:[[25,30],[50,70],[75,30]],
+  4:[[30,28],[70,28],[30,72],[70,72]],
+  5:[[25,25],[75,25],[50,50],[25,75],[75,75]],
+  6:[[28,22],[72,22],[28,50],[72,50],[28,78],[72,78]],
+  7:[[25,20],[75,20],[25,50],[50,50],[75,50],[25,80],[75,80]],
+  8:[[25,20],[50,20],[75,20],[25,50],[75,50],[25,80],[50,80],[75,80]],
+  9:[[22,22],[50,22],[78,22],[22,50],[50,50],[78,50],[22,78],[50,78],[78,78]],
+  10:[[20,18],[50,18],[80,18],[35,42],[65,42],[20,66],[50,66],[80,66],[35,88],[65,88]],
+};
+
+/*
+  Grouped-cluster patterns: still structured, but broken into
+  visible sub-groups so kids practice composing (e.g. 7 = 4+3).
+  Each entry is an array of alternatives; we pick one at random.
+*/
+const GROUPED={
+  1:[[[50,50]]],
+  2:[[[35,50],[65,50]]],
+  3:[
+    [[30,35],[55,35],[80,35]],         // row of 3
+    [[40,30],[60,30],[50,65]],         // triangle
+  ],
+  4:[
+    [[25,40],[45,40],[65,40],[85,40]], // row of 4
+    [[30,30],[55,30],[30,65],[55,65]], // square left
+  ],
+  5:[
+    // group of 3 left + group of 2 right
+    [[20,30],[20,55],[20,80],[70,38],[70,68]],
+    // group of 2 top + group of 3 bottom
+    [[35,22],[65,22],[22,72],[50,72],[78,72]],
+  ],
+  6:[
+    // 3 + 3
+    [[22,25],[22,50],[22,75],[78,25],[78,50],[78,75]],
+    // 4 + 2
+    [[20,30],[42,30],[20,70],[42,70],[75,38],[75,66]],
+  ],
+  7:[
+    // 4 + 3
+    [[18,28],[40,28],[18,72],[40,72],[68,25],[68,50],[68,75]],
+    // 3 + 4
+    [[22,25],[22,50],[22,75],[62,22],[82,22],[62,72],[82,72]],
+  ],
+  8:[
+    // 4 + 4
+    [[18,28],[38,28],[18,68],[38,68],[62,28],[82,28],[62,68],[82,68]],
+    // 5 + 3
+    [[18,20],[40,20],[18,50],[40,50],[29,80],[65,25],[65,50],[65,75]],
+  ],
+  9:[
+    // 5 + 4
+    [[15,20],[35,20],[15,50],[35,50],[25,80],[65,22],[85,22],[65,68],[85,68]],
+    // 3 + 3 + 3
+    [[15,25],[15,50],[15,75],[50,25],[50,50],[50,75],[85,25],[85,50],[85,75]],
+  ],
+  10:[
+    // 5 + 5
+    [[15,18],[35,18],[15,50],[35,50],[25,80],[65,18],[85,18],[65,50],[85,50],[75,80]],
+    // 4 + 3 + 3
+    [[12,28],[30,28],[12,70],[30,70],[52,25],[52,50],[52,75],[80,25],[80,50],[80,75]],
+  ],
+};
+
+/* ── Jitter: add slight randomness to any layout so it's not pixel-identical ── */
+function jitter(pts, amount){
+  return pts.map(([x,y])=>[
+    Math.max(8,Math.min(92, x + (Math.random()-.5)*amount)),
+    Math.max(8,Math.min(92, y + (Math.random()-.5)*amount)),
+  ]);
+}
+
+/* ── Difficulty engine ──
+   diff: 0–1 float
+   Ramps slowly: ~0.03 per correct, drops ~0.06 per wrong.
+   Controls: max number, flash time, pattern style.
+*/
+let diff=0, answer=0, streak=0, wrongStreak=0, waiting=false, started=false, luTimer=0;
+const $=id=>document.getElementById(id);
+const $dots=$('dots'),$prompt=$('prompt'),$nums=$('nums'),
+      $streak=$('streak'),$start=$('startPrompt'),$lu=$('levelUp');
+
+function diffParams(){
+  // Number range: starts 1-4, grows to 1-10
+  const maxN = Math.min(10, Math.floor(4 + diff * 6));
+  // Flash: 2000ms until diff 0.7, then drops to 1500 at diff 1.0
+  const flash = diff < 0.7 ? 2000 : Math.round(2000 - (diff - 0.7) * 1667);
+  // Pattern: canonical until 0.35, then increasingly grouped-cluster
+  const groupedP = Math.max(0, (diff - 0.35) * 1.5); // 0→~1
+  return { maxN, flash: Math.max(flash, 1500), groupedP };
+}
+
+function pickAnswer(p){
+  // 20% chance of an easy confidence round when diff > 0.25
+  if(diff > 0.25 && Math.random() < 0.2){
+    return 1 + Math.floor(Math.random() * 3); // 1-3
+  }
+  // Weight toward the upper range slightly as diff grows
+  const min = Math.max(1, Math.floor(diff * 4));
+  return min + Math.floor(Math.random() * (p.maxN - min + 1));
+}
+
+function pickPattern(n, groupedP){
+  if(Math.random() < groupedP && GROUPED[n]){
+    const alts = GROUPED[n];
+    const pts = alts[Math.floor(Math.random() * alts.length)];
+    return jitter(pts, 6);
+  }
+  return jitter(CANONICAL[n], 5);
+}
+
+function buildGrid(maxN){
+  const top = Math.max(5, maxN);
+  const cols = top <= 5 ? 5 : 5;
+  $nums.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  $nums.innerHTML = '';
+  for(let i = 1; i <= top; i++){
+    const b = document.createElement('button');
+    b.textContent = i;
+    b.onclick = () => check(i, b);
+    $nums.appendChild(b);
+  }
+  // On two rows, shrink button padding
+  if(top > 5) $nums.querySelectorAll('button').forEach(b => b.style.padding = '8px 0');
+}
+
+function startRound(){
+  $start.style.display = 'none';
+  started = true;
+  $prompt.classList.remove('show');
+
+  const p = diffParams();
+  answer = pickAnswer(p);
+  buildGrid(p.maxN);
+
+  const pos = pickPattern(answer, p.groupedP);
+  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+
+  $dots.innerHTML = '';
+  pos.forEach((pt, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot pop';
+    d.style.left = `${pt[0]}%`;
+    d.style.top = `${pt[1]}%`;
+    d.style.transform = 'translate(-50%,-50%)';
+    d.style.background = color;
+    d.style.animationDelay = `${i * 40}ms`;
+    $dots.appendChild(d);
+  });
+
+  enableBtns(true);
+  waiting = true;
+  setTimeout(() => {
+    if(!waiting) return;
+    $dots.querySelectorAll('.dot').forEach(d => d.style.opacity = '0');
+  }, p.flash);
+}
+
+function enableBtns(on){
+  $nums.querySelectorAll('button').forEach(b => {
+    b.disabled = !on; b.classList.remove('correct','wrong');
+  });
+}
+
+function adjustDiff(correct){
+  const prev = diff;
+  if(correct){
+    diff = Math.min(1, diff + 0.03 + Math.random() * 0.02); // ~0.03-0.05 per correct
+    wrongStreak = 0;
+  } else {
+    wrongStreak++;
+    diff = Math.max(0, diff - (0.06 + wrongStreak * 0.03));
+  }
+  // Flash "getting harder" at thresholds
+  for(const t of [0.3, 0.55, 0.8]){
+    if(prev < t && diff >= t){ flashLevelUp(); break; }
+  }
+}
+
+function flashLevelUp(){
+  $lu.classList.add('show');
+  clearTimeout(luTimer);
+  luTimer = setTimeout(() => $lu.classList.remove('show'), 2000);
+}
+
+function check(n, btn){
+  if(!waiting) return;
+  $dots.querySelectorAll('.dot').forEach(d => d.style.opacity = '1');
+
+  if(n === answer){
+    waiting = false;
+    btn.classList.add('correct');
+    streak++;
+    adjustDiff(true);
+    showMsg('🎉', 'Yes! It was ' + answer + '!', streak >= 3 ? streak + ' in a row!' : '');
+    enableBtns(false);
+    setTimeout(startRound, 1400);
+  } else {
+    btn.classList.add('wrong');
+    btn.disabled = true;
+    streak = 0;
+    adjustDiff(false);
+    showMsg('👀', 'Look again!', 'Tap the right number');
+  }
+  $streak.innerHTML = streak >= 2 ? `🔥 <span>${streak}</span> in a row` : '';
+}
+
+function showMsg(emoji, msg, sub){
+  $prompt.querySelector('.emoji').textContent = emoji;
+  $prompt.querySelector('.msg').textContent = msg;
+  $prompt.querySelector('.sub').textContent = sub || '';
+  $prompt.classList.add('show');
+  setTimeout(() => $prompt.classList.remove('show'), 1300);
+}
+
+document.addEventListener('touchmove', e => {
+  if(window.scrollY === 0 && e.cancelable) e.preventDefault();
+}, {passive: false});
+
+buildGrid(diffParams().maxN);
+</script>
+</body>
+</html>

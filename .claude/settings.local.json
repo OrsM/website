@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(curl -L --max-time 30 -o \"public/docs/wigner.pdf\" \"https://webhomes.maths.ed.ac.uk/~v1ranick/papers/wigner.pdf\")",
+      "Bash(curl -L --max-time 30 -o \"public/docs/bitter_lesson.pdf\" \"https://www.cs.utexas.edu/~eunsol/courses/data/bitter_lesson.pdf\")",
+      "Bash(wait)",
+      "Bash(curl -L --max-time 60 -o \"public/docs/arxiv_2001.08361.pdf\" \"https://arxiv.org/pdf/2001.08361\")",
+      "Bash(curl -L --max-time 60 -o \"public/docs/situational_awareness.pdf\" \"https://situational-awareness.ai/wp-content/uploads/2024/06/situationalawareness.pdf\")",
+      "Bash(npm run:*)"
+    ]
+  }
+}
