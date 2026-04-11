@@ -11,7 +11,6 @@ const tools = [
   { path: '/tools/pm-book-recommender', title: 'PM Book Recommender', desc: 'Personalised reading list for product managers' },
   { path: '/tools/price-theory-diagrams', title: 'Price Theory Diagrams', desc: 'Interactive supply & demand, cost curves, monopoly' },
   { path: '/tools/price-theory-flashcards', title: 'Price Theory Flashcards', desc: 'Spaced-repetition study system for McCloskey' },
-  { path: '/tools/price-theory-quiz', title: 'Price Theory Quiz', desc: 'AI-generated questions on applied price theory' },
 ]
 
 const docs = [
