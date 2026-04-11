@@ -16,7 +16,7 @@ export default function BackBar() {
           letterSpacing: '0.02em',
         }}
       >
-        ← Miguel
+        ← Back
       </Link>
     </div>
   )
