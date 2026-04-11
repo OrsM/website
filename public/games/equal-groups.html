@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Grupos Iguales</title>
+<title>Equal Groups</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
   html,body{overscroll-behavior-y:contain;overflow-y:auto}
@@ -28,18 +28,12 @@ var OK="#111111",ERR="#111111",TXT="#111111",SUB="#666666",BG2="rgba(0,0,0,.04)"
 var EM=["🍎","🌟","🟢","🔵","🍊","🌸","🐟","🦋","🍋","🫐"];
 var BC=["#4a90d9","#d94452","#3cb371","#8e6bbf","#d4a017","#d97c2e","#2aad8e","#5a6e7f"];
 
-var L={en:{title:"Equal Groups",check:"Check!",next:"Next →",reset:"Reset",
+var L={title:"Equal Groups",check:"Check!",next:"Next →",reset:"Reset",
 share:function(t,g){return"Share "+t+" into "+g+" equal groups"},sh:"Make every group the same!",
 make:function(g,e){return"Make "+g+" groups of "+e},mh:"Use only what you need!",
 bad:"Not equal yet!",bad2:"Each group needs the same amount!",rem:"Some don't fit! Leave extras up top.",
 yay:"Well done!",left:"extras",
-dr:function(t,g,e){return t+" ÷ "+g+" = "+e},mr:function(g,e,t){return g+" × "+e+" = "+t}},
-es:{title:"Grupos Iguales",check:"¡Comprobar!",next:"Siguiente →",reset:"Reiniciar",
-share:function(t,g){return"Reparte "+t+" en "+g+" grupos iguales"},sh:"¡Que todos tengan lo mismo!",
-make:function(g,e){return"Haz "+g+" grupos de "+e},mh:"¡Usa solo los que necesites!",
-bad:"¡Aún no son iguales!",bad2:"¡Cada grupo necesita lo mismo!",rem:"¡Algunos no caben! Deja extras arriba.",
-yay:"¡Muy bien!",left:"sobran",
-dr:function(t,g,e){return t+" ÷ "+g+" = "+e},mr:function(g,e,t){return g+" × "+e+" = "+t}}};
+dr:function(t,g,e){return t+" ÷ "+g+" = "+e},mr:function(g,e,t){return g+" × "+e+" = "+t}};
 
 // Tiers: mn/mx = group range, mp/xp = per-group range, r = can have remainder
 var T=[
@@ -66,7 +60,6 @@ function gen(tier){
 function cg(){var gs=document.querySelectorAll(".ghost");for(var i=0;i<gs.length;i++)gs[i].remove()}
 
 function App(){
-  var _l=S("es"),lang=_l[0],sL=_l[1];
   var _t=S(0),tier=_t[0],sT=_t[1];
   var _k=S(0),streak=_k[0],sK=_k[1];
   var _s=S(0),stars=_s[0],sS=_s[1];
@@ -81,7 +74,7 @@ function App(){
   var _d=S(false),drg=_d[0],sDr=_d[1];
   var _e=S(false),showEq=_e[0],sE=_e[1];
   var gR=R([]),pR=R(null),tR=R({id:null,el:null});
-  var t=L[lang];
+  var t=L;
 
   var init=C(function(ct){
     var r=gen(ct);sR(r);
@@ -171,9 +164,7 @@ function App(){
     // header
     h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}},
       h("div",{style:{fontSize:20,fontWeight:800,color:TXT}},t.title),
-      h("div",{style:{display:"flex",gap:8,alignItems:"center"}},
-        h("div",{style:{fontSize:15,fontWeight:800,color:OK}},"⭐ "+stars),
-        h("button",{onClick:function(){sL(lang==="en"?"es":"en")},style:{background:TXT,color:"#fdf6e3",border:"none",borderRadius:14,padding:"4px 12px",fontSize:12,fontWeight:800,cursor:"pointer"}},lang==="en"?"🇪🇸":"🇬🇧"))),
+      h("div",{style:{fontSize:15,fontWeight:800,color:OK}},"⭐ "+stars)),
     // prompt
     h("div",{style:{textAlign:"center",marginBottom:10,background:"rgba(255,255,255,.7)",borderRadius:16,padding:"14px 12px"}},
       h("div",{style:{fontSize:21,fontWeight:800,color:TXT}},prompt),
