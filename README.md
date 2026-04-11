@@ -12,60 +12,92 @@ src/
 public/
   games/                  standalone HTML games
   docs/                   PDF papers
-server/
-  proxy.js               Anthropic API proxy (Express)
 ```
 
 ## Local dev
 
 ```bash
-# Install deps
 npm install
-
-# Start Vite dev server (port 5173)
-npm run dev
-
-# Start API proxy (port 3001) — needed for the Quiz tool
-node server/proxy.js
+npm run dev   # Vite on :5173
 ```
 
-The Vite dev server proxies `/api/*` → `localhost:3001`.
-
-## API proxy setup
-
-Create `server/.env` (never commit this):
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-## Build
+## Deploy to phone (one-liner)
 
 ```bash
-npm run build   # outputs to dist/
+./deploy.sh
 ```
 
-## Deploy to Android (Termux)
+This builds the site and transfers it to the phone via scp. Run from Git Bash.
+
+## Phone setup (one-time, already done)
+
+Phone: u0_a269@192.168.1.151, SSH on port 8022.
 
 ```bash
-# Transfer build and proxy
-scp -r dist/ <user>@<phone-ip>:~/website/
-scp server/proxy.js <user>@<phone-ip>:~/server/
+# Install nginx and cloudflared
+pkg install nginx cloudflared
 
-# On phone — install deps
-pkg install nginx nodejs
-cd ~/server && npm install express http-proxy-middleware dotenv
+# nginx config at $PREFIX/etc/nginx/nginx.conf
+# serves ~/website/dist on port 8080
 
-# Create .env on phone (do NOT transfer it)
-echo "ANTHROPIC_API_KEY=sk-ant-..." > ~/server/.env
+# Termux:Boot auto-start at ~/.termux/boot/start.sh
+```
 
-# Start services
-node ~/server/proxy.js &
+nginx config:
+```nginx
+events {}
+http {
+  include mime.types;
+  server {
+    listen 8080;
+    root /data/data/com.termux/files/home/website/dist;
+    index index.html;
+    location / {
+      try_files $uri $uri/ /index.html;
+    }
+  }
+}
+```
+
+## Cloudflare Tunnel — pending domain approval
+
+eu.org request saved as: `20260412004452-arf-52743`
+Domain requested: `miguelors.eu.org`
+Tunnel name: `miguelors` (already created in Cloudflare)
+
+Once eu.org approves the domain, complete the setup:
+
+**1. Route the tunnel to the domain:**
+```bash
+# On the phone
+cloudflared tunnel route dns miguelors miguelors.eu.org
+```
+
+**2. Create tunnel config on the phone:**
+```bash
+cat > ~/.cloudflared/config.yml << 'EOF'
+tunnel: miguelors
+credentials-file: /data/data/com.termux/files/home/.cloudflared/<TUNNEL-ID>.json
+ingress:
+  - hostname: miguelors.eu.org
+    service: http://localhost:8080
+  - service: http_status:404
+EOF
+```
+Replace `<TUNNEL-ID>` with the ID printed when you ran `cloudflared tunnel create`.
+
+**3. Add tunnel to Termux:Boot:**
+```bash
+cat > ~/.termux/boot/start.sh << 'EOF'
+#!/data/data/com.termux/files/usr/bin/sh
 nginx
+cloudflared tunnel run miguelors
+EOF
 ```
 
-Configure nginx to serve `~/website/dist` on port 8080 and proxy `/api/*` → `localhost:3001`.
-
-DuckDNS auto-update (add to cron or boot script):
+**4. Start the tunnel:**
 ```bash
-curl "https://www.duckdns.org/update?domains=<your-domain>&token=<your-token>&ip="
+cloudflared tunnel run miguelors
 ```
+
+Site will then be live at `https://miguelors.eu.org`.

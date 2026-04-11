@@ -1,18 +1,19 @@
 #!/bin/bash
-# Usage: ./deploy.sh <user>@192.168.1.151
-# Example: ./deploy.sh u0_a123@192.168.1.151
+# Deploy to phone — run from Git Bash
+# Usage: ./deploy.sh
 
-HOST=${1:-"u0_a123@192.168.1.151"}
+PHONE="u0_a269@192.168.1.151"
+PORT=8022
 
 set -e
 
 echo "Building..."
 npm run build
 
-echo "Transferring to $HOST..."
-rsync -avz --delete dist/ "$HOST:~/website/dist/"
+echo "Transferring to phone..."
+scp -P $PORT -r dist/. "$PHONE:~/website/dist/"
 
 echo "Reloading nginx..."
-ssh "$HOST" "nginx -s reload"
+ssh -p $PORT "$PHONE" "nginx -s reload"
 
-echo "Done. Site live at http://miguelors.duckdns.org"
+echo "Done."
