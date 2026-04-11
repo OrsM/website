@@ -8,6 +8,12 @@ dist/
 .env
 server/.env
 
+# Vite cache
+.vite/
+
+# Claude Code
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
