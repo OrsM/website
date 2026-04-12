@@ -24,3 +24,25 @@ a {
 button {
   font-family: inherit;
 }
+
+/* PDF.js text layer — makes text selectable over canvas */
+.pdf-text-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pdf-text-layer span {
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  color: transparent;
+}
+
+.pdf-text-layer ::selection {
+  background: rgba(0, 100, 255, 0.25);
+  color: transparent;
+}

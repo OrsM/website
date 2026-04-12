@@ -14,6 +14,11 @@ echo "Transferring built files..."
 scp -P $PORT dist/index.html "$PHONE:~/website/dist/"
 scp -P $PORT -r dist/assets/. "$PHONE:~/website/dist/assets/"
 
+echo "Syncing PDF.js viewer (once)..."
+ssh -p $PORT "$PHONE" "[ -d ~/website/dist/pdfjs ] || mkdir -p ~/website/dist/pdfjs"
+ssh -p $PORT "$PHONE" "[ -f ~/website/dist/pdfjs/web/viewer.html ]" || \
+  scp -P $PORT -r dist/pdfjs/. "$PHONE:~/website/dist/pdfjs/"
+
 echo "Syncing PDFs (skipping unchanged)..."
 for local_file in $(find dist/docs dist/games -name "*.pdf" 2>/dev/null); do
   remote_file="~/website/$local_file"
