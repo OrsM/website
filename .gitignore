@@ -20,3 +20,6 @@ Thumbs.db
 
 # PDFs
 *.pdf
+
+# SSH deploy key (public key for phone — copy to phone's ~/.ssh/authorized_keys)
+.phone-pubkey
