@@ -13,14 +13,26 @@ const tools = [
   { path: '/tools/price-theory-flashcards', title: 'Price Theory Flashcards', desc: 'Spaced-repetition study system for McCloskey' },
 ]
 
-const docs = [
-  { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Wigner' },
-  { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton' },
-  { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
-  { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
-  { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
-  { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
-  { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
+const docGroups = [
+  {
+    label: 'Pricing',
+    desc: 'Algorithmic pricing dynamics and platform design',
+    docs: [
+      { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
+      { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
+      { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
+    ],
+  },
+  {
+    label: 'Gen AI',
+    desc: 'Scaling, capability, and the trajectory of AI systems',
+    docs: [
+      { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Wigner' },
+      { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton' },
+      { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
+      { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
+    ],
+  },
 ]
 
 const s = {
@@ -61,6 +73,27 @@ const s = {
     fontSize: '13px',
     color: theme.textMuted,
     marginTop: '2px',
+  },
+  docGroup: {
+    marginBottom: '24px',
+  },
+  docGroupHeader: {
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: '10px',
+    marginBottom: '4px',
+  },
+  docGroupLabel: {
+    fontSize: '12px',
+    fontWeight: '500',
+    color: theme.text,
+    border: `1px solid ${theme.border}`,
+    borderRadius: '3px',
+    padding: '1px 6px',
+  },
+  docGroupDesc: {
+    fontSize: '12px',
+    color: theme.textMuted,
   },
   docLink: {
     display: 'block',
@@ -121,13 +154,21 @@ export default function Home() {
 
       <section style={s.section}>
         <div style={s.sectionLabel}>Reading</div>
-        {docs.map(d => (
-          <Link key={d.slug} to={`/docs/${d.slug}`} style={s.docLink}>
-            <div style={s.docTitle}>{d.title}</div>
-            <div style={s.docAuthor}>{d.author}</div>
-          </Link>
+        {docGroups.map(group => (
+          <div key={group.label} style={s.docGroup}>
+            <div style={s.docGroupHeader}>
+              <span style={s.docGroupLabel}>{group.label}</span>
+              <span style={s.docGroupDesc}>{group.desc}</span>
+            </div>
+            {group.docs.map(d => (
+              <Link key={d.slug} to={`/docs/${d.slug}`} style={s.docLink}>
+                <div style={s.docTitle}>{d.title}</div>
+                <div style={s.docAuthor}>{d.author}</div>
+              </Link>
+            ))}
+            <div style={{ borderBottom: `1px solid ${theme.border}` }} />
+          </div>
         ))}
-        <div style={{ borderBottom: `1px solid ${theme.border}` }} />
       </section>
 
       <footer style={s.footer}>
