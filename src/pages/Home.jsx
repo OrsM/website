@@ -18,6 +18,9 @@ const docs = [
   { href: '/docs/bitter_lesson.pdf', title: 'The Bitter Lesson', author: 'Rich Sutton' },
   { href: '/docs/arxiv_2001.08361.pdf', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
   { href: '/docs/situational_awareness.pdf', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
+  { href: '/docs/algorithmic_pricing_nber.pdf', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
+  { href: '/docs/platform_design_pricing_algorithms.pdf', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
+  { href: '/docs/algorithmic_pricing_amazon.pdf', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
 ]
 
 const s = {
