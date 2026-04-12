@@ -14,13 +14,13 @@ const tools = [
 ]
 
 const docs = [
-  { href: '/docs/wigner.pdf', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Wigner' },
-  { href: '/docs/bitter_lesson.pdf', title: 'The Bitter Lesson', author: 'Rich Sutton' },
-  { href: '/docs/arxiv_2001.08361.pdf', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
-  { href: '/docs/situational_awareness.pdf', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
-  { href: '/docs/algorithmic_pricing_nber.pdf', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
-  { href: '/docs/platform_design_pricing_algorithms.pdf', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
-  { href: '/docs/algorithmic_pricing_amazon.pdf', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
+  { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Wigner' },
+  { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton' },
+  { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
+  { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
+  { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
+  { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
+  { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
 ]
 
 const s = {
@@ -122,10 +122,10 @@ export default function Home() {
       <section style={s.section}>
         <div style={s.sectionLabel}>Reading</div>
         {docs.map(d => (
-          <a key={d.href} href={d.href} target="_blank" rel="noopener noreferrer" style={s.docLink}>
+          <Link key={d.slug} to={`/docs/${d.slug}`} style={s.docLink}>
             <div style={s.docTitle}>{d.title}</div>
             <div style={s.docAuthor}>{d.author}</div>
-          </a>
+          </Link>
         ))}
         <div style={{ borderBottom: `1px solid ${theme.border}` }} />
       </section>
