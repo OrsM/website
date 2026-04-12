@@ -101,3 +101,24 @@ cloudflared tunnel run miguelors
 ```
 
 Site will then be live at `https://miguelors.eu.org`.
+
+## TODO
+
+### PDF viewer
+- [ ] Add annotation support — highlights and notes stored on the phone's Node API (groundwork explored, shelved for now)
+- [ ] Style the PDF.js viewer to match the site theme (toolbar colours, fonts)
+- [ ] Add a back button inside the PDF.js viewer that returns to the home page
+- [ ] Test text selection on iOS Safari
+
+### Infrastructure
+- [ ] Install Termux:Boot app and verify `~/.termux/boot/start-services.sh` auto-starts nginx + node API on reboot
+- [ ] Complete Cloudflare Tunnel setup once eu.org approves `miguelors.eu.org`
+- [ ] Add HTTPS once the tunnel is live (removes the "not secure" browser warning)
+
+### Deploy
+- [ ] `deploy.sh` currently only runs from Git Bash — make it work from PowerShell or add a `.ps1` equivalent
+- [ ] Consider adding a `--dry-run` flag to show what would be transferred without deploying
+
+### Site
+- [ ] Add content to the home page (bio, description)
+- [ ] Make the PDF reading list dynamic (JSON file) so new papers can be added without touching JSX
