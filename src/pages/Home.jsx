@@ -133,7 +133,7 @@ export default function Home() {
   return (
     <div style={s.page}>
       <h1 style={s.name}>Miguel</h1>
-      <p style={s.bio}>Personal site where I collect docs of interest for myself, and simple games for my kids (mainly AI generated).</p>
+      <p style={s.bio}>A personal site — includes papers I find worth reading, and small games built for my kids.</p>
 
       <section style={s.section}>
         <div style={s.sectionLabel}>
