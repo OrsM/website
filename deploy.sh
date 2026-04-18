@@ -13,6 +13,7 @@ npm run build
 echo "Transferring built files..."
 scp -P $PORT dist/index.html "$PHONE:~/website/dist/"
 scp -P $PORT -r dist/assets/. "$PHONE:~/website/dist/assets/"
+scp -P $PORT dist/papers.json "$PHONE:~/website/dist/"
 
 echo "Syncing PDF.js viewer (once)..."
 ssh -p $PORT "$PHONE" "[ -d ~/website/dist/pdfjs ] || mkdir -p ~/website/dist/pdfjs"
@@ -36,6 +37,9 @@ done
 
 echo "Reloading nginx..."
 ssh -p $PORT "$PHONE" "nginx -s reload"
+
+echo "Restarting Node API..."
+ssh -p $PORT "$PHONE" "pkill node; sleep 1; node ~/website/api.js >> ~/website/api.log 2>&1 &"
 
 echo "Ensuring cloudflared tunnel is running..."
 ssh -p $PORT "$PHONE" "pgrep cloudflared > /dev/null || (cloudflared tunnel run miguelors > ~/.cloudflared/tunnel.log 2>&1 &)"

@@ -1,16 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { theme } from '../theme'
-
-const papers = [
-  { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Eugene Wigner', year: '1960', group: 'Gen AI' },
-  { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton', year: '2019', group: 'Gen AI' },
-  { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.', year: '2020', group: 'Gen AI' },
-  { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner', year: '2024', group: 'Gen AI' },
-  { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson', year: '2016', group: 'Pricing' },
-  { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest', year: '2021', group: 'Pricing' },
-  { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al.', year: '2024', group: 'Pricing' },
-]
 
 const interactive = [
   { href: '/games/equal-groups.html', title: 'Equal Groups', desc: 'Division and equal distribution', tag: 'Game' },
@@ -111,8 +101,13 @@ const s = {
 }
 
 export default function Home() {
+  const [papers, setPapers] = useState([])
   const [paperFilter, setPaperFilter] = useState('Pricing')
   const [interactiveFilter, setInteractiveFilter] = useState('Game')
+
+  useEffect(() => {
+    fetch('/papers.json').then(r => r.json()).then(setPapers).catch(() => {})
+  }, [])
 
   const visiblePapers = paperFilter === 'all' ? papers : papers.filter(p => p.group === paperFilter)
   const visibleInteractive = interactiveFilter === 'all' ? interactive : interactive.filter(i => i.tag === interactiveFilter)
