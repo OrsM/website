@@ -172,6 +172,7 @@ export default function Home() {
       <footer style={s.footer}>
         <a href="https://github.com/OrsM" target="_blank" rel="noopener noreferrer" style={s.footerLink}>GitHub</a>
         <a href="https://www.linkedin.com/in/miguelors/" target="_blank" rel="noopener noreferrer" style={s.footerLink}>LinkedIn</a>
+        <Link to="/add" style={s.footerLink}>+</Link>
       </footer>
     </div>
   )
