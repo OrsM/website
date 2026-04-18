@@ -27,23 +27,19 @@ npm run dev   # Vite on :5173
 ./deploy.sh
 ```
 
-This builds the site and transfers it to the phone via scp. Run from Git Bash.
+Builds the site and transfers it to the phone via scp. Run from Git Bash.
 
 ## Phone setup (one-time, already done)
 
 Phone: u0_a269@192.168.1.151, SSH on port 8022.
+Live at: https://miguelors.com and https://www.miguelors.com
 
 ```bash
-# Install nginx and cloudflared
 pkg install nginx cloudflared
-
-# nginx config at $PREFIX/etc/nginx/nginx.conf
-# serves ~/website/dist on port 8080
-
-# Termux:Boot auto-start at ~/.termux/boot/start.sh
 ```
 
-nginx config:
+nginx config at `$PREFIX/etc/nginx/nginx.conf`, serves `~/website/dist` on port 8080:
+
 ```nginx
 events {}
 http {
@@ -59,48 +55,37 @@ http {
 }
 ```
 
-## Cloudflare Tunnel — pending domain approval
+Cloudflare Tunnel config at `~/.cloudflared/config.yml`:
 
-eu.org request saved as: `20260412004452-arf-52743`
-Domain requested: `miguelors.eu.org`
-Tunnel name: `miguelors` (already created in Cloudflare)
+```yaml
+tunnel: 62e5bf82-c4c9-4e95-8678-8d65f460c883
+credentials-file: /data/data/com.termux/files/home/.cloudflared/62e5bf82-c4c9-4e95-8678-8d65f460c883.json
 
-Once eu.org approves the domain, complete the setup:
-
-**1. Route the tunnel to the domain:**
-```bash
-# On the phone
-cloudflared tunnel route dns miguelors miguelors.eu.org
-```
-
-**2. Create tunnel config on the phone:**
-```bash
-cat > ~/.cloudflared/config.yml << 'EOF'
-tunnel: miguelors
-credentials-file: /data/data/com.termux/files/home/.cloudflared/<TUNNEL-ID>.json
 ingress:
-  - hostname: miguelors.eu.org
+  - hostname: miguelors.com
+    service: http://localhost:8080
+  - hostname: www.miguelors.com
     service: http://localhost:8080
   - service: http_status:404
-EOF
 ```
-Replace `<TUNNEL-ID>` with the ID printed when you ran `cloudflared tunnel create`.
 
-**3. Add tunnel to Termux:Boot:**
+Start manually (if not running):
 ```bash
-cat > ~/.termux/boot/start.sh << 'EOF'
+nginx
+cloudflared tunnel run miguelors &
+```
+
+## Termux:Boot (TODO)
+
+Install Termux:Boot app, then create `~/.termux/boot/start.sh`:
+
+```bash
 #!/data/data/com.termux/files/usr/bin/sh
 nginx
 cloudflared tunnel run miguelors
-EOF
 ```
 
-**4. Start the tunnel:**
-```bash
-cloudflared tunnel run miguelors
-```
-
-Site will then be live at `https://miguelors.eu.org`.
+This auto-starts nginx + tunnel on phone reboot.
 
 ## TODO
 
@@ -111,13 +96,10 @@ Site will then be live at `https://miguelors.eu.org`.
 - [ ] Test text selection on iOS Safari
 
 ### Infrastructure
-- [ ] Install Termux:Boot app and verify `~/.termux/boot/start-services.sh` auto-starts nginx + node API on reboot
-- [ ] Complete Cloudflare Tunnel setup once eu.org approves `miguelors.eu.org`
-- [ ] Add HTTPS once the tunnel is live (removes the "not secure" browser warning)
+- [ ] Install Termux:Boot app so nginx + tunnel auto-start on reboot
 
 ### Deploy
 - [ ] `deploy.sh` currently only runs from Git Bash — make it work from PowerShell or add a `.ps1` equivalent
-- [ ] Consider adding a `--dry-run` flag to show what would be transferred without deploying
 
 ### Site
 - [ ] Add content to the home page (bio, description)

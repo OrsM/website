@@ -37,4 +37,7 @@ done
 echo "Reloading nginx..."
 ssh -p $PORT "$PHONE" "nginx -s reload"
 
+echo "Ensuring cloudflared tunnel is running..."
+ssh -p $PORT "$PHONE" "pgrep cloudflared > /dev/null || (cloudflared tunnel run miguelors > ~/.cloudflared/tunnel.log 2>&1 &)"
+
 echo "Done."
