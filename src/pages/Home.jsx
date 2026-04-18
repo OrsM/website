@@ -1,38 +1,21 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { theme } from '../theme'
 
-const games = [
-  { path: '/games/equal-groups.html', title: 'Equal Groups', desc: 'Division and equal distribution' },
-  { path: '/games/number-bars.html', title: 'Number Bars', desc: 'Pick, merge, and match target sums' },
-  { path: '/games/subitizing-flash.html', title: 'Subitizing Flash', desc: 'Visual number recognition' },
+const papers = [
+  { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Eugene Wigner', year: '1960', group: 'Gen AI' },
+  { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton', year: '2019', group: 'Gen AI' },
+  { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.', year: '2020', group: 'Gen AI' },
+  { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner', year: '2024', group: 'Gen AI' },
+  { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson', year: '2016', group: 'Pricing' },
+  { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest', year: '2021', group: 'Pricing' },
+  { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al.', year: '2024', group: 'Pricing' },
 ]
 
-const tools = [
-  { path: '/tools/pm-book-recommender', title: 'PM Book Recommender', desc: 'Personalised reading list for product managers' },
-  { path: '/tools/price-theory-diagrams', title: 'Price Theory Diagrams', desc: 'Interactive supply & demand, cost curves, monopoly' },
-  { path: '/tools/price-theory-flashcards', title: 'Price Theory Flashcards', desc: 'Spaced-repetition study system for McCloskey' },
-]
-
-const docGroups = [
-  {
-    label: 'Pricing',
-    desc: 'Algorithmic pricing dynamics and platform design',
-    docs: [
-      { slug: 'algorithmic_pricing_nber', title: 'Algorithmic Pricing: Implications for Marketing Strategy and Regulation', author: 'Spann, Bertini, Koenigsberg et al., NBER 2024' },
-      { slug: 'platform_design_pricing_algorithms', title: 'Platform Design when Sellers Use Pricing Algorithms', author: 'Johnson, Rhodes, Wildenbeest, TSE 2021' },
-      { slug: 'algorithmic_pricing_amazon', title: 'An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace', author: 'Chen, Mislove, Wilson, WWW 2016' },
-    ],
-  },
-  {
-    label: 'Gen AI',
-    desc: 'Scaling, capability, and the trajectory of AI systems',
-    docs: [
-      { slug: 'wigner', title: 'The Unreasonable Effectiveness of Mathematics', author: 'Wigner' },
-      { slug: 'bitter_lesson', title: 'The Bitter Lesson', author: 'Rich Sutton' },
-      { slug: 'arxiv_2001.08361', title: 'Scaling Laws for Neural Language Models', author: 'Kaplan et al.' },
-      { slug: 'situational_awareness', title: 'Situational Awareness', author: 'Leopold Aschenbrenner, 2024' },
-    ],
-  },
+const interactive = [
+  { href: '/games/equal-groups.html', title: 'Equal Groups', desc: 'Division and equal distribution', tag: 'Game' },
+  { href: '/games/subitizing-flash.html', title: 'Subitizing Flash', desc: 'Visual number recognition', tag: 'Game' },
+  { path: '/tools/price-theory-diagrams', title: 'Price Theory Diagrams', desc: 'Interactive supply & demand, cost curves, monopoly', tag: 'Tool' },
 ]
 
 const s = {
@@ -58,58 +41,60 @@ const s = {
     color: theme.textMuted,
     marginBottom: '16px',
   },
-  card: {
-    display: 'block',
-    textDecoration: 'none',
-    color: theme.text,
-    padding: '14px 0',
-    borderTop: `1px solid ${theme.border}`,
-  },
-  cardTitle: {
-    fontSize: '15px',
-    fontWeight: '500',
-  },
-  cardDesc: {
-    fontSize: '13px',
-    color: theme.textMuted,
-    marginTop: '2px',
-  },
-  docGroup: {
-    marginBottom: '24px',
-  },
-  docGroupHeader: {
+  filters: {
     display: 'flex',
+    flexWrap: 'wrap',
+    gap: '6px',
+    marginBottom: '16px',
+  },
+  chip: (active) => ({
+    fontSize: '12px',
+    padding: '4px 12px',
+    borderRadius: '16px',
+    border: `1px solid ${active ? theme.text : theme.border}`,
+    color: active ? theme.text : theme.textMuted,
+    cursor: 'pointer',
+    background: 'transparent',
+    fontFamily: theme.fontSans,
+  }),
+  row: {
+    display: 'grid',
+    gridTemplateColumns: '1fr auto',
+    gap: '0 16px',
     alignItems: 'baseline',
-    gap: '10px',
-    marginBottom: '4px',
-  },
-  docGroupLabel: {
-    fontSize: '12px',
-    fontWeight: '500',
-    color: theme.text,
-    border: `1px solid ${theme.border}`,
-    borderRadius: '3px',
-    padding: '1px 6px',
-  },
-  docGroupDesc: {
-    fontSize: '12px',
-    color: theme.textMuted,
-  },
-  docLink: {
-    display: 'block',
-    textDecoration: 'none',
-    color: theme.text,
     padding: '14px 0',
     borderTop: `1px solid ${theme.border}`,
+    textDecoration: 'none',
+    color: theme.text,
   },
-  docTitle: {
+  rowTitle: {
     fontSize: '15px',
     fontWeight: '400',
   },
-  docAuthor: {
+  rowSub: {
     fontSize: '13px',
     color: theme.textMuted,
     marginTop: '2px',
+  },
+  rowRight: {
+    textAlign: 'right',
+    flexShrink: '0',
+  },
+  rowYear: {
+    fontSize: '12px',
+    color: '#bbb',
+    display: 'block',
+  },
+  rowTag: {
+    fontSize: '10px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    color: '#bbb',
+    display: 'block',
+    marginTop: '2px',
+  },
+  sectionEnd: {
+    borderBottom: `1px solid ${theme.border}`,
   },
   footer: {
     marginTop: '80px',
@@ -126,49 +111,67 @@ const s = {
 }
 
 export default function Home() {
+  const [paperFilter, setPaperFilter] = useState('Pricing')
+  const [interactiveFilter, setInteractiveFilter] = useState('Game')
+
+  const visiblePapers = paperFilter === 'all' ? papers : papers.filter(p => p.group === paperFilter)
+  const visibleInteractive = interactiveFilter === 'all' ? interactive : interactive.filter(i => i.tag === interactiveFilter)
+
   return (
     <div style={s.page}>
       <h1 style={s.name}>Miguel</h1>
 
       <section style={s.section}>
-        <div style={s.sectionLabel}>Games</div>
-        {games.map(g => (
-          <a key={g.path} href={g.path} style={s.card}>
-            <div style={s.cardTitle}>{g.title}</div>
-            <div style={s.cardDesc}>{g.desc}</div>
-          </a>
-        ))}
-        <div style={{ borderBottom: `1px solid ${theme.border}` }} />
-      </section>
-
-      <section style={s.section}>
-        <div style={s.sectionLabel}>Tools</div>
-        {tools.map(t => (
-          <Link key={t.path} to={t.path} style={s.card}>
-            <div style={s.cardTitle}>{t.title}</div>
-            <div style={s.cardDesc}>{t.desc}</div>
+        <div style={s.sectionLabel}>Reading</div>
+        <div style={s.filters}>
+          {['all', 'Pricing', 'Gen AI'].map(f => (
+            <button key={f} style={s.chip(paperFilter === f)} onClick={() => setPaperFilter(f)}>
+              {f === 'all' ? 'All' : f}
+            </button>
+          ))}
+        </div>
+        {visiblePapers.map(p => (
+          <Link key={p.slug} to={`/docs/${p.slug}`} style={s.row}>
+            <div>
+              <div style={s.rowTitle}>{p.title}</div>
+              <div style={s.rowSub}>{p.author}</div>
+            </div>
+            <div style={s.rowRight}>
+              <span style={s.rowYear}>{p.year}</span>
+              <span style={s.rowTag}>{p.group}</span>
+            </div>
           </Link>
         ))}
-        <div style={{ borderBottom: `1px solid ${theme.border}` }} />
+        <div style={s.sectionEnd} />
       </section>
 
       <section style={s.section}>
-        <div style={s.sectionLabel}>Reading</div>
-        {docGroups.map(group => (
-          <div key={group.label} style={s.docGroup}>
-            <div style={s.docGroupHeader}>
-              <span style={s.docGroupLabel}>{group.label}</span>
-              <span style={s.docGroupDesc}>{group.desc}</span>
-            </div>
-            {group.docs.map(d => (
-              <Link key={d.slug} to={`/docs/${d.slug}`} style={s.docLink}>
-                <div style={s.docTitle}>{d.title}</div>
-                <div style={s.docAuthor}>{d.author}</div>
+        <div style={s.sectionLabel}>Interactive</div>
+        <div style={s.filters}>
+          {['all', 'Game', 'Tool'].map(f => (
+            <button key={f} style={s.chip(interactiveFilter === f)} onClick={() => setInteractiveFilter(f)}>
+              {f === 'all' ? 'All' : f}
+            </button>
+          ))}
+        </div>
+        {visibleInteractive.map(item => (
+          item.path
+            ? <Link key={item.path} to={item.path} style={s.row}>
+                <div>
+                  <div style={s.rowTitle}>{item.title}</div>
+                  <div style={s.rowSub}>{item.desc}</div>
+                </div>
+                <div style={s.rowRight}><span style={s.rowTag}>{item.tag}</span></div>
               </Link>
-            ))}
-            <div style={{ borderBottom: `1px solid ${theme.border}` }} />
-          </div>
+            : <a key={item.href} href={item.href} style={s.row}>
+                <div>
+                  <div style={s.rowTitle}>{item.title}</div>
+                  <div style={s.rowSub}>{item.desc}</div>
+                </div>
+                <div style={s.rowRight}><span style={s.rowTag}>{item.tag}</span></div>
+              </a>
         ))}
+        <div style={s.sectionEnd} />
       </section>
 
       <footer style={s.footer}>

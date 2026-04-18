@@ -75,17 +75,21 @@ nginx
 cloudflared tunnel run miguelors &
 ```
 
-## Termux:Boot (TODO)
+## Termux:Boot (TODO — high priority)
 
-Install Termux:Boot app, then create `~/.termux/boot/start.sh`:
+Without this, sshd/nginx/cloudflared all die on phone reboot or when Termux is killed.
+Symptoms: `deploy.sh` times out on SSH, site goes down, can't redeploy without opening Termux manually.
+
+Install the Termux:Boot app from F-Droid, then create `~/.termux/boot/start.sh`:
 
 ```bash
 #!/data/data/com.termux/files/usr/bin/sh
+sshd
 nginx
 cloudflared tunnel run miguelors
 ```
 
-This auto-starts nginx + tunnel on phone reboot.
+This auto-starts sshd + nginx + tunnel on phone reboot.
 
 ## TODO
 
