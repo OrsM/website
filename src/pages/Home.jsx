@@ -132,8 +132,8 @@ export default function Home() {
 
   return (
     <div style={s.page}>
-      <h1 style={s.name}>Miguel Ors Bravo</h1>
-      <p style={s.bio}>Based in Madrid. Work in pricing at a large tech company. Studied law and business. Married, two kids.</p>
+      <h1 style={s.name}>Miguel</h1>
+      <p style={s.bio}>Personal site where I collect docs of interest for myself, and simple games for my kids (mainly AI generated).</p>
 
       <section style={s.section}>
         <div style={s.sectionLabel}>
