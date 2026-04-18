@@ -18,7 +18,14 @@ const s = {
     fontSize: '28px',
     fontWeight: '500',
     letterSpacing: '-0.02em',
+    marginBottom: '12px',
+  },
+  bio: {
+    fontSize: '14px',
+    color: theme.textMuted,
+    lineHeight: '1.6',
     marginBottom: '64px',
+    maxWidth: '480px',
   },
   section: {
     marginBottom: '56px',
@@ -30,6 +37,17 @@ const s = {
     textTransform: 'uppercase',
     color: theme.textMuted,
     marginBottom: '16px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  addLink: {
+    fontSize: '14px',
+    color: theme.textMuted,
+    textDecoration: 'none',
+    fontWeight: '400',
+    textTransform: 'none',
+    letterSpacing: '0',
   },
   filters: {
     display: 'flex',
@@ -114,10 +132,14 @@ export default function Home() {
 
   return (
     <div style={s.page}>
-      <h1 style={s.name}>Miguel</h1>
+      <h1 style={s.name}>Miguel Ors Bravo</h1>
+      <p style={s.bio}>Based in Madrid. Work in pricing at a large tech company. Studied law and business. Married, two kids.</p>
 
       <section style={s.section}>
-        <div style={s.sectionLabel}>Reading</div>
+        <div style={s.sectionLabel}>
+          <span>Reading</span>
+          <Link to="/add" style={s.addLink}>+</Link>
+        </div>
         <div style={s.filters}>
           {['all', 'Pricing', 'Gen AI'].map(f => (
             <button key={f} style={s.chip(paperFilter === f)} onClick={() => setPaperFilter(f)}>
@@ -172,7 +194,6 @@ export default function Home() {
       <footer style={s.footer}>
         <a href="https://github.com/OrsM" target="_blank" rel="noopener noreferrer" style={s.footerLink}>GitHub</a>
         <a href="https://www.linkedin.com/in/miguelors/" target="_blank" rel="noopener noreferrer" style={s.footerLink}>LinkedIn</a>
-        <Link to="/add" style={s.footerLink}>+</Link>
       </footer>
     </div>
   )
