@@ -132,8 +132,8 @@ export default function Home() {
 
   return (
     <div style={s.page}>
-      <h1 style={s.name}>Miguel</h1>
-      <p style={s.bio}>A personal site — includes papers I find worth reading, and small games built for my kids.</p>
+      <h1 style={s.name}>🍋 Lemon Worlds</h1>
+      <p style={s.bio}>Papers that I found interesting (mainly on pricing topics), games for my kids. Named after <Link to="/docs/akerlof_lemons" style={{ color: 'inherit' }}>Akerlof's lemons paper</Link> and <a href="https://www.youtube.com/watch?v=5Vzw1VKWzlg" target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>The National's Lemonworld</a>, both about lemons.</p>
 
       <section style={s.section}>
         <div style={s.sectionLabel}>
@@ -191,10 +191,6 @@ export default function Home() {
         <div style={s.sectionEnd} />
       </section>
 
-      <footer style={s.footer}>
-        <a href="https://github.com/OrsM" target="_blank" rel="noopener noreferrer" style={s.footerLink}>GitHub</a>
-        <a href="https://www.linkedin.com/in/miguelors/" target="_blank" rel="noopener noreferrer" style={s.footerLink}>LinkedIn</a>
-      </footer>
     </div>
   )
 }

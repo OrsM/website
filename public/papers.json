@@ -3,6 +3,7 @@
   {"slug": "bitter_lesson", "title": "The Bitter Lesson", "author": "Rich Sutton", "year": "2019", "group": "Gen AI"},
   {"slug": "arxiv_2001.08361", "title": "Scaling Laws for Neural Language Models", "author": "Kaplan et al.", "year": "2020", "group": "Gen AI"},
   {"slug": "situational_awareness", "title": "Situational Awareness", "author": "Leopold Aschenbrenner", "year": "2024", "group": "Gen AI"},
+  {"slug": "akerlof_lemons", "title": "The Market for Lemons: Quality Uncertainty and the Market Mechanism", "author": "George Akerlof", "year": "1970", "group": "Pricing"},
   {"slug": "algorithmic_pricing_amazon", "title": "An Empirical Analysis of Algorithmic Pricing on Amazon Marketplace", "author": "Chen, Mislove, Wilson", "year": "2016", "group": "Pricing"},
   {"slug": "platform_design_pricing_algorithms", "title": "Platform Design when Sellers Use Pricing Algorithms", "author": "Johnson, Rhodes, Wildenbeest", "year": "2021", "group": "Pricing"},
   {"slug": "algorithmic_pricing_nber", "title": "Algorithmic Pricing: Implications for Marketing Strategy and Regulation", "author": "Spann, Bertini, Koenigsberg et al.", "year": "2024", "group": "Pricing"}

@@ -21,6 +21,7 @@ ssh -p $PORT "$PHONE" "[ -f ~/website/dist/pdfjs/web/viewer.html ]" || \
   scp -P $PORT -r dist/pdfjs/. "$PHONE:~/website/dist/pdfjs/"
 
 echo "Syncing PDFs (skipping unchanged)..."
+uploaded_any=0
 for local_file in $(find dist/docs dist/games -name "*.pdf" 2>/dev/null); do
   remote_file="~/website/$local_file"
   local_size=$(wc -c < "$local_file")
@@ -30,18 +31,32 @@ for local_file in $(find dist/docs dist/games -name "*.pdf" 2>/dev/null); do
     remote_dir="~/website/$(dirname $local_file)"
     ssh -p $PORT "$PHONE" "mkdir -p $remote_dir"
     scp -P $PORT "$local_file" "$PHONE:$remote_dir/"
+    uploaded_any=1
   else
     echo "  Skipping $local_file (unchanged)"
   fi
 done
 
+echo "Linearizing PDFs on phone (fast web view)..."
+ssh -p $PORT "$PHONE" 'if ! command -v qpdf >/dev/null; then
+  echo "  qpdf not installed on phone — run: pkg install qpdf"
+else
+  for pdf in ~/website/dist/docs/*.pdf ~/website/dist/games/*.pdf; do
+    [ -f "$pdf" ] || continue
+    if qpdf --check "$pdf" 2>&1 | grep -q "File is linearized"; then
+      continue
+    fi
+    qpdf --linearize --replace-input "$pdf" 2>/dev/null && echo "  linearized $(basename "$pdf")"
+  done
+fi'
+
 echo "Reloading nginx..."
 ssh -p $PORT "$PHONE" "nginx -s reload"
 
 echo "Restarting Node API..."
-ssh -p $PORT "$PHONE" "pkill node; sleep 1; node ~/website/api.js >> ~/website/api.log 2>&1 &"
+ssh -p $PORT "$PHONE" "pkill -f 'node.*api.js' 2>/dev/null; sleep 1; nohup setsid node ~/website/api.js >> ~/website/api.log 2>&1 < /dev/null &" >/dev/null 2>&1
 
 echo "Ensuring cloudflared tunnel is running..."
-ssh -p $PORT "$PHONE" "pgrep cloudflared > /dev/null || (cloudflared tunnel run miguelors > ~/.cloudflared/tunnel.log 2>&1 &)"
+ssh -p $PORT "$PHONE" "pgrep cloudflared > /dev/null || nohup setsid cloudflared tunnel run lemonworlds >> ~/.cloudflared/tunnel.log 2>&1 < /dev/null &" >/dev/null 2>&1
 
 echo "Done."
