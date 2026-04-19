@@ -14,6 +14,10 @@ echo "Transferring built files..."
 scp -P $PORT dist/index.html "$PHONE:~/website/dist/"
 scp -P $PORT -r dist/assets/. "$PHONE:~/website/dist/assets/"
 scp -P $PORT dist/papers.json "$PHONE:~/website/dist/"
+ssh -p $PORT "$PHONE" "mkdir -p ~/website/dist/games"
+for f in dist/games/*.html; do
+  [ -f "$f" ] && scp -P $PORT "$f" "$PHONE:~/website/dist/games/"
+done
 
 echo "Syncing PDF.js viewer (once)..."
 ssh -p $PORT "$PHONE" "[ -d ~/website/dist/pdfjs ] || mkdir -p ~/website/dist/pdfjs"
