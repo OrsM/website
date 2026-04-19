@@ -100,18 +100,3 @@ nohup setsid cloudflared tunnel run lemonworlds >> ~/.cloudflared/tunnel.log 2>&
 
 Ensure it's executable: `chmod +x ~/.termux/boot/start.sh`. Requires `pkg install termux-api` for the wake-lock binary.
 
-## TODO
-
-### PDF viewer
-- [ ] Add annotation support — highlights and notes stored on the phone's Node API (groundwork explored, shelved for now)
-- [ ] Style the PDF.js viewer to match the site theme (toolbar colours, fonts)
-- [ ] Add a back button inside the PDF.js viewer that returns to the home page
-- [ ] Test text selection on iOS Safari
-
-
-### Deploy
-- [ ] `deploy.sh` currently only runs from Git Bash — make it work from PowerShell or add a `.ps1` equivalent
-
-### Site
-- [ ] Add content to the home page (bio, description)
-- [ ] Make the PDF reading list dynamic (JSON file) so new papers can be added without touching JSX
