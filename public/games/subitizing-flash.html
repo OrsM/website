@@ -37,7 +37,7 @@
   }
   .dots-area{width:82%;height:78%;position:relative}
   .dot{
-    position:absolute;width:min(36px,8vw);height:min(36px,8vw);border-radius:50%;
+    position:absolute;font-size:min(40px,9vw);line-height:1;
     transition:opacity .25s;
   }
   .dot.pop{animation:popIn .3s cubic-bezier(.34,1.56,.64,1) both}
@@ -255,16 +255,15 @@ function startRound(){
   buildGrid(p.maxN);
 
   const pos = pickPattern(answer, p.groupedP);
-  const color = COLORS[Math.floor(Math.random() * COLORS.length)];
 
   $dots.innerHTML = '';
   pos.forEach((pt, i) => {
     const d = document.createElement('div');
     d.className = 'dot pop';
+    d.textContent = '🍋';
     d.style.left = `${pt[0]}%`;
     d.style.top = `${pt[1]}%`;
     d.style.transform = 'translate(-50%,-50%)';
-    d.style.background = color;
     d.style.animationDelay = `${i * 40}ms`;
     $dots.appendChild(d);
   });

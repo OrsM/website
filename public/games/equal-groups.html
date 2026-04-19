@@ -25,7 +25,7 @@
 <script>
 var h=React.createElement,S=React.useState,C=React.useCallback,E=React.useEffect,R=React.useRef;
 var OK="#111111",ERR="#111111",TXT="#111111",SUB="#666666",BG2="rgba(0,0,0,.04)",BORD="#e0e0e0";
-var EM=["🍎","🌟","🟢","🔵","🍊","🌸","🐟","🦋","🍋","🫐"];
+var EM=["🍋"];
 var BC=["#4a90d9","#d94452","#3cb371","#8e6bbf","#d4a017","#d97c2e","#2aad8e","#5a6e7f"];
 
 var L={title:"Equal Groups",check:"Check!",next:"Next →",reset:"Reset",
@@ -54,7 +54,7 @@ function gen(tier){
     if(Math.random()<.5)return{t:"d",ng:ng,pg:pg,tot:tot,ps:tot,rm:0,em:em};
     return{t:"m",ng:ng,pg:pg,tot:tot,ps:tot+ri(2,Math.max(3,Math.ceil(tot*.35))),rm:0,em:em};
   }
-  return{t:"d",ng:2,pg:3,tot:6,ps:6,rm:0,em:"🍎"};
+  return{t:"d",ng:2,pg:3,tot:6,ps:6,rm:0,em:"🍋"};
 }
 
 function cg(){var gs=document.querySelectorAll(".ghost");for(var i=0;i<gs.length;i++)gs[i].remove()}
